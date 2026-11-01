@@ -1,0 +1,80 @@
+[
+  {
+    "family": "random",
+    "n": 1024,
+    "m": 32,
+    "alphabet": 26,
+    "mode": "begin",
+    "instance_id": "random_1024_32_26_begin_41052",
+    "seed": 41052,
+    "expected": 0,
+    "text_sha256": "36e77c1375ed588508733f944a5621e557139396d17db23c5a048c58aa98a903",
+    "pattern_sha256": "e081caab7d89f1365cb865ffb7fdae401385e54ecb984643a07bcf0bc3692480",
+    "status": "complete"
+  },
+  {
+    "family": "random",
+    "n": 1024,
+    "m": 32,
+    "alphabet": 26,
+    "mode": "end",
+    "instance_id": "random_1024_32_26_end_41052",
+    "seed": 41052,
+    "expected": 992,
+    "text_sha256": "370cabd2634d8c58efba0c373ac78bcb664751249d18b49dee2fa0e5dd029012",
+    "pattern_sha256": "e081caab7d89f1365cb865ffb7fdae401385e54ecb984643a07bcf0bc3692480",
+    "status": "complete"
+  },
+  {
+    "family": "random",
+    "n": 1024,
+    "m": 32,
+    "alphabet": 26,
+    "mode": "absent",
+    "instance_id": "random_1024_32_26_absent_41052",
+    "seed": 41052,
+    "expected": -1,
+    "text_sha256": "bf00e43d80fece01c4185fa8451ead11989c575e741e4554c5eac392d5e9b2f4",
+    "pattern_sha256": "e081caab7d89f1365cb865ffb7fdae401385e54ecb984643a07bcf0bc3692480",
+    "status": "complete"
+  },
+  {
+    "family": "repeated",
+    "n": 4096,
+    "m": 32,
+    "alphabet": 1,
+    "mode": "absent",
+    "instance_id": "repeated_4096_32_1_absent_41052",
+    "seed": 41052,
+    "expected": -1,
+    "text_sha256": "016e1ecb51650bef2394f52662bd7706375306efb5fba76b97983df9ee3568f9",
+    "pattern_sha256": "42a9bfe303e140f92e452cc21ad9dc04bc65219b60bb96f489f1ab9c1d3142d2",
+    "status": "complete"
+  },
+  {
+    "family": "periodic",
+    "n": 4096,
+    "m": 32,
+    "alphabet": 2,
+    "mode": "absent",
+    "instance_id": "periodic_4096_32_2_absent_41052",
+    "seed": 41052,
+    "expected": -1,
+    "text_sha256": "896c758fb1810132b7895af15a7c8cb33280515a090ce468f662c507a2c3ce4d",
+    "pattern_sha256": "b05fa180f3a0ed9717985b562f4c4f85b51093faa9bc6dfdf2d91b0fcec39ba3",
+    "status": "complete"
+  },
+  {
+    "family": "prose",
+    "n": 4096,
+    "m": 32,
+    "alphabet": 0,
+    "mode": "end",
+    "instance_id": "prose_4096_32_0_end_41052",
+    "seed": 41052,
+    "expected": 4064,
+    "text_sha256": "e27da4b5d9347d1831308ab06931241a49c57325eb2c3b00750ffc2ccacafa21",
+    "pattern_sha256": "0a7593dce691fcacfdb9269642f0e69d64211e3c988bf96dfdda2aef51d1ebaa",
+    "status": "complete"
+  }
+]
