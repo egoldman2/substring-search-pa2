@@ -1,0 +1,8 @@
+{
+  "cpu": "Apple M1 Pro",
+  "memory_bytes": 17179869184,
+  "model": "MacBookPro18,3",
+  "collected": "27 October 2026",
+  "method": "sysctl machdep.cpu.brand_string hw.memsize hw.model",
+  "note": "Separate read-only hardware query; sandbox prevented these fields in the automatic environment capture."
+}
