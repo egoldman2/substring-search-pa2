@@ -89,6 +89,31 @@ def main():
         facts[f'{tag}_comparison_ratio'] = f"{(a['preprocessing_comparisons']+a['search_comparisons'])/(b['preprocessing_comparisons']+b['search_comparisons']):.2f}"
     facts['capped_timed_batches'] = sum(int(x['batch']) == 65536 and float(x['elapsed_ns']) < 1e6
         for rows in groups.values() for x in rows)
+    followup = ROOT / 'results/mismatch-2026-10-27'
+    follow_raw = list(csv.DictReader((followup/'raw.csv').open()))
+    follow_rows = []
+    for position in (0,1,7,31,127,511):
+        for alg in ('naive','kmp'):
+            medians = []
+            for seed in (41052,41053,41054):
+                selected = [x for x in follow_raw if x['phase']=='timing' and x['algorithm']==alg
+                    and x['instance_id']==f'mismatch_{position}_{seed}']
+                if len(selected)!=9 or any(x['correct']!='true' or x['result']!='npos' for x in selected):
+                    raise ValueError('invalid controlled experiment')
+                medians.append(statistics.median(float(x['elapsed_ns'])/int(x['batch']) for x in selected))
+            q1,q3 = quartiles(medians)
+            row = dict(position=position,algorithm=alg,median_ns=statistics.median(medians),q1_ns=q1,q3_ns=q3,
+                search_comparisons=int(selected[0]['search_comparisons']),
+                preprocessing_comparisons=int(selected[0]['preprocessing_comparisons']))
+            if alg=='naive' and row['search_comparisons'] != 65025*(position+1):
+                raise ValueError('controlled counter formula failed')
+            follow_rows.append(row)
+            if position==1:
+                facts[f'followup_{alg}_us']=f"{row['median_ns']/1000:.3f}"
+                facts[f'followup_{alg}_iqr_us']=f"{q1/1000:.3f}-{q3/1000:.3f}"
+                facts[f'followup_{alg}_comparisons']=f"{row['search_comparisons']+row['preprocessing_comparisons']:,}"
+    write_csv(ROOT/'results/mismatch-summary.csv',follow_rows)
+    facts['followup_kmp_slowdown']=f"{float(facts['followup_kmp_us'])/float(facts['followup_naive_us']):.2f}"
     (ROOT / 'results/facts.json').write_text(json.dumps(facts, indent=2)+'\n')
     plt.rcParams.update({'font.size':11, 'axes.spines.top':False, 'axes.spines.right':False,
         'savefig.dpi':180, 'svg.hashsalt':'substring-search'})
@@ -144,6 +169,15 @@ def main():
     ax.axhline(1,color='gray',linewidth=.8); ax.set_xscale('log',base=2)
     ax.set_xlabel('Random alphabet size'); ax.set_ylabel('Naive / KMP'); ax.legend(); ax.grid(alpha=.18)
     save(fig,'alphabet-ratios')
+    fig,ax=plt.subplots(figsize=(8,4.4))
+    for alg in ('naive','kmp'):
+        selected=[x for x in follow_rows if x['algorithm']==alg]
+        ax.plot([x['position']+1 for x in selected],[x['median_ns']/1000 for x in selected],
+            marker='o',label=alg,color=colours[alg])
+    ax.set_xscale('log',base=2); ax.set_yscale('log'); ax.grid(alpha=.18); ax.legend()
+    ax.set_xlabel('First mismatching pattern position + 1 (bytes)')
+    ax.set_ylabel('Time per search (microseconds)')
+    save(fig,'mismatch-position')
     table=['# Main results','', 'Times are medians of three instance medians. Each instance has nine timed batches.',
         'IQR spans the three instance medians using inclusive linear interpolation. Units: microseconds per search.',
         '', '| Configuration | Naive median (IQR) | KMP median (IQR) | Naive / KMP time |', '| --- | --- | --- | --- |']
