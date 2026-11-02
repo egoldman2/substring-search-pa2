@@ -81,16 +81,23 @@ def instance(config, seed, corpus):
 
 
 def run(args):
+    compiler = os.environ.get('CXX', 'c++')
+    flags = os.environ.get('CXXFLAGS', '-std=c++17 -Wall -Wextra -Wpedantic -O2')
+    # force rebuilding even when a quick source edit shares the binary's timestamp
+    subprocess.run(['make', '-B', 'build/benchmark', f'CXX={compiler}', f'CXXFLAGS={flags}'], cwd=ROOT, check=True)
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)
     corpus = (ROOT / 'data/austen.txt').read_bytes()
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT))
-    compiler = os.environ.get('CXX', 'c++')
     metadata = {'started_utc': datetime.now(timezone.utc).isoformat(), 'source_revision': revision,
         'source_dirty': dirty, 'os': platform.platform(), 'machine': platform.machine(),
         'python': platform.python_version(), 'compiler': subprocess.check_output([compiler, '--version'], text=True),
-        'flags': os.environ.get('CXXFLAGS', '-std=c++17 -Wall -Wextra -Wpedantic -O2'),
+        'flags': flags,
+        'executable_sha256': sha((ROOT/'build/benchmark').read_bytes()),
+        'source_sha256': {name:sha((ROOT/name).read_bytes()) for name in
+            ('src/naive.cpp','src/kmp.cpp','src/search.hpp','bench/driver.cpp')},
+        'working_tree_status': subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True),
         'clock': 'std::chrono::steady_clock', 'unit': 'nanoseconds per batch',
         'corpus_sha256': sha(corpus), 'repetitions': args.repetitions, 'instances': args.instances,
         'batch_target_ns': 1000000, 'batch_cap': 65536, 'driver_timeout_seconds': 30,

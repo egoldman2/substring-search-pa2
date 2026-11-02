@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
-RUN = ROOT / 'results/main-2026-10-27'
+RUN = ROOT / 'results/main-verified-2026-10-27'
 
 
 def quartiles(values):
@@ -89,7 +89,7 @@ def main():
         facts[f'{tag}_comparison_ratio'] = f"{(a['preprocessing_comparisons']+a['search_comparisons'])/(b['preprocessing_comparisons']+b['search_comparisons']):.2f}"
     facts['capped_timed_batches'] = sum(int(x['batch']) == 65536 and float(x['elapsed_ns']) < 1e6
         for rows in groups.values() for x in rows)
-    followup = ROOT / 'results/mismatch-2026-10-27'
+    followup = ROOT / 'results/mismatch-verified-2026-10-27'
     follow_raw = list(csv.DictReader((followup/'raw.csv').open()))
     follow_rows = []
     for position in (0,1,7,31,127,511):
@@ -134,14 +134,14 @@ def main():
         fig.savefig(ROOT/f'figures/{stem}.pdf',metadata={'CreationDate':None,'ModDate':None})
         plt.close(fig)
     sizes = (1024,16384,262144)
-    fig,axes = plt.subplots(1,3,figsize=(13,4.1))
+    fig,axes = plt.subplots(3,1,figsize=(8,10))
     for ax,(family,alphabet,title) in zip(axes,[('random',26,'Random, alphabet 26'),('repeated',1,'Repeated near-match'),('prose',0,'Ordinary prose')]):
         lines(ax,[(family,n,32,alphabet,'absent') for n in sizes],sizes)
         ax.set_title(title); ax.set_xlabel('Text length (bytes)')
     axes[0].legend()
     save(fig,'runtime-size')
     lengths = (1,8,32,128,512)
-    fig,axes = plt.subplots(1,3,figsize=(13,4.1))
+    fig,axes = plt.subplots(3,1,figsize=(8,10))
     for ax,(family,alphabet,title) in zip(axes,[('repeated',1,'Repeated near-match'),('periodic',2,'Periodic near-match'),('prose',0,'Ordinary prose')]):
         lines(ax,[(family,65536,m,alphabet,'absent') for m in lengths],lengths)
         ax.set_title(title); ax.set_xlabel('Pattern length (bytes)')

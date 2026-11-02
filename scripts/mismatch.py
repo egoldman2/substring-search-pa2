@@ -10,9 +10,11 @@ import time
 from datetime import datetime, timezone
 from experiment import ROOT, sha
 
-output = ROOT / 'results/mismatch-2026-10-27'
+output = ROOT / 'results/mismatch-verified-2026-10-27'
 output.mkdir(exist_ok=False)
-metadata = json.loads((ROOT/'results/main-2026-10-27/environment.json').read_text())
+metadata = json.loads((ROOT/'results/main-verified-2026-10-27/environment.json').read_text())
+if metadata['executable_sha256'] != sha((ROOT/'build/benchmark').read_bytes()):
+    raise ValueError('follow-up executable differs from verified main run')
 metadata.update(started_utc=datetime.now(timezone.utc).isoformat(),
     source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
     source_dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)),

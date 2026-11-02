@@ -1,0 +1,1627 @@
+[
+  {
+    "title": "Naive substring search and KMP",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Naive substring search and KMP",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 50,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "1 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "First-occurrence search over bytes",
+        "x": 64,
+        "y": 215,
+        "w": 1120,
+        "h": 65,
+        "size": 36,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Ethan Goldman",
+        "x": 64,
+        "y": 307,
+        "w": 1120,
+        "h": 65,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Advanced Algorithms 41052",
+        "x": 64,
+        "y": 399,
+        "w": 1120,
+        "h": 65,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      }
+    ],
+    "notes": "This project compares two ways to find a pattern inside a text. The problem sounds simple, but the algorithms treat repeated partial matches differently. Naive search starts again at each candidate. KMP keeps information about the pattern so it can reuse part of a failed match. The question is when that extra preparation pays for itself. I will show the important invariants, then the measured results, and finally a controlled example where counting comparisons gave an incomplete prediction.",
+    "sources": [
+      "Report sections 1-5; results/facts.json"
+    ]
+  },
+  {
+    "title": "The search contract",
+    "elements": [
+      {
+        "type": "text",
+        "text": "The search contract",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "2 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "Return the first matching byte index",
+        "x": 64,
+        "y": 164,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Empty pattern: 0     Absent pattern: npos",
+        "x": 64,
+        "y": 267,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Zero bytes are valid. Inputs stay unchanged.",
+        "x": 64,
+        "y": 370,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "ABABABAC with ABABAC returns 2",
+        "x": 64,
+        "y": 473,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      }
+    ],
+    "notes": "Both algorithms receive exactly the same byte sequences and must return the smallest matching index. An empty pattern returns zero, and an absent pattern returns npos. These are byte positions, so Unicode character boundaries do not enter the definition. Embedded zero bytes also count as ordinary data. The example used throughout the explanation is text ABABABAC and pattern ABABAC. Its first match begins at index two. This contract matters because finding any occurrence, or finding every occurrence, would change when an algorithm can stop and how much work belongs in the comparison.",
+    "sources": [
+      "src/search.hpp; tests/search_tests.cpp"
+    ]
+  },
+  {
+    "title": "Naive search: every valid start",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Naive search: every valid start",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "3 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "0",
+        "x": 360,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "1",
+        "x": 432,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "2",
+        "x": 504,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "3",
+        "x": 576,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "4",
+        "x": 648,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "5",
+        "x": 720,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "6",
+        "x": 792,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "cell",
+        "text": "7",
+        "x": 864,
+        "y": 147,
+        "w": 66,
+        "h": 35,
+        "size": 23,
+        "fill": "#ffffff",
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "text",
+        "x": 64,
+        "y": 210,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 360,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 432,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 720,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 792,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 864,
+        "y": 195,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "start 0: fail",
+        "x": 64,
+        "y": 310,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 360,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 432,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 720,
+        "y": 295,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#f9e8e2",
+        "color": "#bd4a2d"
+      },
+      {
+        "type": "text",
+        "text": "start 1: fail",
+        "x": 64,
+        "y": 410,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 432,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#f9e8e2",
+        "color": "#bd4a2d"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 504,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 576,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 648,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 720,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 792,
+        "y": 395,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "start 2: first match",
+        "x": 64,
+        "y": 510,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 720,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 792,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 864,
+        "y": 495,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "13 search equality tests. Worst case: (n - m + 1)m.",
+        "x": 64,
+        "y": 603,
+        "w": 1150,
+        "h": 45,
+        "size": 29,
+        "bold": false,
+        "color": "#20282b"
+      }
+    ],
+    "notes": "Naive search considers every valid start from zero through n minus m. At each start it compares pattern bytes from the beginning. In this example, start zero matches ABABA, then the final C meets a B and fails. Start one fails immediately because A meets B. Start two matches all six bytes and returns two. The search makes thirteen equality tests in total. The correctness argument follows that order: every rejected start has an actual mismatch, and no earlier valid start remains when a full match returns. The important boundary is that m must not exceed n before subtracting unsigned sizes. Otherwise the candidate range can underflow. The empty pattern is also deliberate: its zero required comparisons succeed at start zero. For a worst case, take a text of only a bytes and a pattern of many a bytes followed by b. Every candidate repeats almost the whole pattern. That gives exactly n minus m plus one, multiplied by m, comparisons. The short code and the worst-case bound describe different strengths of this baseline.",
+    "sources": [
+      "src/naive.cpp; report section 1.2"
+    ]
+  },
+  {
+    "title": "KMP: the LPS table",
+    "elements": [
+      {
+        "type": "text",
+        "text": "KMP: the LPS table",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "4 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "LPS = longest proper prefix that is also a suffix",
+        "x": 64,
+        "y": 148,
+        "w": 1152,
+        "h": 50,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "table",
+        "x": 64,
+        "y": 235,
+        "w": 1152,
+        "h": 180,
+        "values": [
+          [
+            "index",
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          [
+            "pattern",
+            "A",
+            "B",
+            "A",
+            "B",
+            "A",
+            "C"
+          ],
+          [
+            "LPS",
+            "0",
+            "0",
+            "1",
+            "2",
+            "3",
+            "0"
+          ]
+        ],
+        "size": 30
+      },
+      {
+        "type": "text",
+        "text": "ABABA keeps ABA as both prefix and suffix",
+        "x": 64,
+        "y": 461,
+        "w": 1152,
+        "h": 55,
+        "size": 32,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "At C, try border lengths 3, 1, then 0",
+        "x": 64,
+        "y": 539,
+        "w": 1152,
+        "h": 55,
+        "size": 32,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "O(m) preprocessing time and O(m) auxiliary space",
+        "x": 64,
+        "y": 611,
+        "w": 1152,
+        "h": 42,
+        "size": 27,
+        "bold": false,
+        "color": "#225a95"
+      }
+    ],
+    "notes": "KMP first describes the pattern's own repetition. LPS means longest proper prefix that is also a suffix. For ABABAC, the table is zero, zero, one, two, three, zero. A proper prefix must be shorter than the whole prefix being considered. Look at ABABA, ending at pattern index four. Its first three bytes are ABA, and its last three bytes are also ABA, so the entry is three. Construction extends a known border when the next bytes agree. On a mismatch, it tries the border of that border. At the final C, a border length of three would require B. That fails. Falling back gives length one, which also requires B. That fails too. At length zero, C differs from A, so the final entry is zero. The key is to follow already established borders. A random shorter length is not necessarily a suffix and cannot safely describe a retained partial match. The table takes linear time and one size_t entry for each pattern byte.",
+    "sources": [
+      "Knuth, Morris and Pratt (1977), https://doi.org/10.1137/0206024; src/kmp.cpp"
+    ]
+  },
+  {
+    "title": "KMP fallback preserves a valid match",
+    "elements": [
+      {
+        "type": "text",
+        "text": "KMP fallback preserves a valid match",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "5 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "text: i = 5",
+        "x": 64,
+        "y": 192,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 360,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 432,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 720,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 792,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 864,
+        "y": 177,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "before: matched = 5",
+        "x": 64,
+        "y": 307,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 360,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 432,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 720,
+        "y": 292,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#f9e8e2",
+        "color": "#bd4a2d"
+      },
+      {
+        "type": "text",
+        "text": "after: matched = 3",
+        "x": 64,
+        "y": 445,
+        "w": 285,
+        "h": 50,
+        "size": 25,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 504,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 576,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 648,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "B",
+        "x": 720,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "A",
+        "x": 792,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "cell",
+        "text": "C",
+        "x": 864,
+        "y": 430,
+        "w": 66,
+        "h": 64,
+        "size": 34,
+        "fill": "#eef3f6",
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Keep i = 5. Compare B with pattern[3].",
+        "x": 64,
+        "y": 555,
+        "w": 1152,
+        "h": 50,
+        "size": 32,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Valid retained prefix: ABA. First match: 8 - 6 = 2.",
+        "x": 64,
+        "y": 615,
+        "w": 1152,
+        "h": 45,
+        "size": 29,
+        "bold": false,
+        "color": "#225a95"
+      }
+    ],
+    "notes": "During the search, matched tells us how many pattern-prefix bytes equal the text suffix immediately before i. That is the invariant. Here the first five bytes match. At text index five, B differs from pattern index five, C. The matched text ends in ABA, which is also a pattern prefix, so the table changes matched from five to three. The text index stays five. B now matches pattern index three, and the final A and C complete the occurrence at index two. The search uses nine equality tests, plus seven earlier tests to construct this pattern's table. This tiny example therefore does not promise a faster complete call. What matters is that fallback keeps a valid border and rules out starts that cannot succeed. Resetting matched to zero at the same text index can miss this occurrence. Moving the text index backward would lose the property that avoids repeated scans. For the linear bound, text position only advances, and each fallback reduces a prefix length built by earlier successful comparisons. That limits the total repeated comparisons even though one text byte can be compared more than once.",
+    "sources": [
+      "src/kmp.cpp; report sections 1.3-1.4"
+    ]
+  },
+  {
+    "title": "Predictions saved before timing",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Predictions saved before timing",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "6 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "Random early mismatches may favour naive",
+        "x": 64,
+        "y": 164,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Long partial matches should favour KMP",
+        "x": 64,
+        "y": 267,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Beginning matches expose preprocessing cost",
+        "x": 64,
+        "y": 370,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "table",
+        "x": 64,
+        "y": 494,
+        "w": 1152,
+        "h": 150,
+        "values": [
+          [
+            "Algorithm",
+            "Worst-case time",
+            "Auxiliary space"
+          ],
+          [
+            "naive",
+            "O((n - m + 1)m)",
+            "O(1)"
+          ],
+          [
+            "KMP",
+            "O(n + m)",
+            "O(m)"
+          ]
+        ],
+        "size": 27
+      }
+    ],
+    "notes": "The predictions were committed before the first performance pilot and remain unchanged. Naive might compete on random inputs because most candidates fail quickly. KMP should benefit when many candidates repeat a long partial match. A match at the beginning should make preprocessing relatively important because little text needs searching. There was no numerical crossover prediction and no confident winner for prose. These are hypotheses about the complete calls in this implementation. They do not assume that a linear worst-case bound wins every small example, or that every periodic text is difficult for naive search.",
+    "sources": [
+      "docs/predictions.md, commit c06dfc8"
+    ]
+  },
+  {
+    "title": "A controlled measurement",
+    "elements": [
+      {
+        "type": "text",
+        "text": "A controlled measurement",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "7 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "363 instances, nine timed batches per instance",
+        "x": 64,
+        "y": 164,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Same inputs, verified first positions, alternating order",
+        "x": 64,
+        "y": 267,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "KMP table construction included on every call",
+        "x": 64,
+        "y": 370,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "M1 Pro, 16 GiB, macOS, Apple Clang 21, C++17 -O2",
+        "x": 64,
+        "y": 525,
+        "w": 1152,
+        "h": 80,
+        "size": 27,
+        "bold": false,
+        "color": "#225a95"
+      }
+    ],
+    "notes": "The main study has three hundred and sixty-three validated instances. It varies text length, pattern length, alphabet, structure and match position. Each instance has nine timed batches, after warm-up and calibration. Both algorithms receive the same inputs, and the standard library checks actual first positions outside timing. The monotonic clock surrounds algorithm calls only. It excludes file loading, generation and printing. KMP builds and destroys its table on every call. Results are consumed, and optimized assembly confirmed repeated calls inside the batching loop. The plots summarise instance medians and show their interquartile spread. This separates repeated timing noise from differences between the three input instances.",
+    "sources": [
+      "bench/driver.cpp; scripts/experiment.py; results/main-2026-10-27/environment.json"
+    ]
+  },
+  {
+    "title": "Long partial matches reward KMP",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Long partial matches reward KMP",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "8 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "Repeated text, absent pattern, n = 65,536",
+        "x": 64,
+        "y": 144,
+        "w": 1152,
+        "h": 45,
+        "size": 29,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "chart",
+        "x": 64,
+        "y": 215,
+        "w": 865,
+        "h": 420,
+        "xvalues": [
+          1,
+          8,
+          32,
+          128,
+          512
+        ],
+        "series": [
+          {
+            "name": "naive",
+            "values": [
+              0.0439440625,
+              0.22512,
+              0.71602,
+              3.2935,
+              11.1598
+            ],
+            "color": "#225a95"
+          },
+          {
+            "name": "kmp",
+            "values": [
+              0.04412125,
+              0.1056225,
+              0.1047425,
+              0.10615875,
+              0.1045025
+            ],
+            "color": "#bd4a2d"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "text": "106.79x",
+        "x": 965,
+        "y": 290,
+        "w": 245,
+        "h": 95,
+        "size": 58,
+        "bold": true,
+        "color": "#bd4a2d"
+      },
+      {
+        "type": "text",
+        "text": "faster at\nm = 512",
+        "x": 970,
+        "y": 405,
+        "w": 240,
+        "h": 100,
+        "size": 31,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Dots: median of three instance medians. Nine batches per instance. IQR in report.",
+        "x": 64,
+        "y": 648,
+        "w": 1140,
+        "h": 35,
+        "size": 21,
+        "bold": false,
+        "color": "#647074"
+      }
+    ],
+    "notes": "This plot holds text length at sixty-five thousand five hundred and thirty-six and increases the length of an absent near-match pattern. The naive curve rises because each candidate repeats a longer prefix. KMP remains close to a linear scan of the text. At pattern length five hundred and twelve, naive takes about eleven point two milliseconds while KMP takes about one hundred and five microseconds. That is approximately one hundred and seven times faster. The spread is small relative to this gap. This is an intentionally difficult input for naive search. On random alphabet-twenty-six text, the algorithms are much closer, with naive slightly faster in the measured large absent case. The prose windows also give overlapping spreads. The result supports a conditional choice, rather than declaring a universal winner.",
+    "sources": [
+      "results/summary.csv; results/tables.md; report figures 1-2"
+    ]
+  },
+  {
+    "title": "Comparison counts test the explanation",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Comparison counts test the explanation",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "9 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "Naive: 33,292,800 equality tests",
+        "x": 64,
+        "y": 155,
+        "w": 1152,
+        "h": 65,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "KMP: 131,582, including preprocessing",
+        "x": 64,
+        "y": 239,
+        "w": 1152,
+        "h": 65,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Count ratio 253.02; runtime ratio 106.79",
+        "x": 64,
+        "y": 323,
+        "w": 1152,
+        "h": 65,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "table",
+        "x": 64,
+        "y": 450,
+        "w": 1152,
+        "h": 166,
+        "values": [
+          [
+            "Algorithm",
+            "Time (microseconds)",
+            "Across-instance IQR"
+          ],
+          [
+            "naive",
+            "11159.800",
+            "11131.500-11185.650"
+          ],
+          [
+            "KMP",
+            "104.502",
+            "104.379-105.132"
+          ]
+        ],
+        "size": 25
+      }
+    ],
+    "notes": "The counters test the explanation about repeated work. On that repeated absent input, naive makes roughly thirty-three million comparisons. The exact formula is n minus m plus one, multiplied by m. KMP makes about one hundred and thirty-two thousand, including preprocessing. The analysis script checks those counts against independently derived formulas. This confirms that KMP removes repeated equality tests. But the comparison ratio is about two hundred and fifty-three, while the runtime ratio is only about one hundred and seven. Equality tests are not equally expensive complete steps. The code also updates indices, follows fallbacks and accesses the table. This difference motivated a separate experiment, with its own prediction recorded after the main study.",
+    "sources": [
+      "results/facts.json; scripts/analyse.py; docs/followup-prediction.md"
+    ]
+  },
+  {
+    "title": "Almost equal counts, different runtimes",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Almost equal counts, different runtimes",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "10 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "Text: a repeated 65,536 times",
+        "x": 64,
+        "y": 147,
+        "w": 1152,
+        "h": 55,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Pattern: ab followed by 510 a bytes",
+        "x": 64,
+        "y": 212,
+        "w": 1152,
+        "h": 55,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Both absent searches, m = 512",
+        "x": 64,
+        "y": 277,
+        "w": 1152,
+        "h": 55,
+        "size": 30,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "table",
+        "x": 64,
+        "y": 374,
+        "w": 1152,
+        "h": 188,
+        "values": [
+          [
+            "Algorithm",
+            "Equality tests",
+            "Time (us)",
+            "IQR (us)"
+          ],
+          [
+            "naive",
+            "130,050",
+            "61.111",
+            "60.991-61.309"
+          ],
+          [
+            "KMP",
+            "132,091",
+            "108.188",
+            "107.569-108.207"
+          ]
+        ],
+        "size": 25
+      },
+      {
+        "type": "text",
+        "text": "KMP is 1.77 times slower. Equalities omit surrounding work.",
+        "x": 64,
+        "y": 597,
+        "w": 1152,
+        "h": 58,
+        "size": 31,
+        "bold": true,
+        "color": "#bd4a2d"
+      }
+    ],
+    "notes": "The follow-up moves one mismatching b through an otherwise all-a pattern. At index one, naive and KMP make almost equal numbers of equality tests. The new prediction was that their runtimes would be similar. Instead, naive takes about sixty-one microseconds and KMP about one hundred and eight. KMP is one point seven seven times slower, and the observed spreads are well separated. The exact counts are one hundred and thirty thousand and fifty for naive, and one hundred and thirty-two thousand and ninety-one for KMP. The difference is only about one point six percent. Looking at the source explains the limitation of the count: naive rejects each candidate on its second comparison, while KMP repeatedly fails at pattern index one, falls back to zero and compares the same text byte again. Those paths perform different surrounding work. This does not identify a cache or branch-prediction cause. It establishes that comparison count alone is an insufficient timing model, while still being a useful measure of the repeated work removed.",
+    "sources": [
+      "results/mismatch-summary.csv; docs/review.md; report section 5"
+    ]
+  },
+  {
+    "title": "Limits of the evidence",
+    "elements": [
+      {
+        "type": "text",
+        "text": "Limits of the evidence",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "11 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "One measured machine and compiler",
+        "x": 64,
+        "y": 164,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Three instances per configuration",
+        "x": 64,
+        "y": 267,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Prose windows come from one repeated excerpt",
+        "x": 64,
+        "y": 370,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      }
+    ],
+    "notes": "The large adversarial result is clear, but the scope stays narrow. Measurements came from one Apple M1 Pro and one optimized compiler build. Three instances do not describe a broad population, and the prose windows come from the same repeated excerpt. Very fast calls also include a visible batching-overhead floor. Small percentage differences should therefore be treated cautiously. The experiments establish mechanisms and examples, while the complexity arguments provide guarantees beyond those examples.",
+    "sources": [
+      "report sections 3.3 and 6"
+    ]
+  },
+  {
+    "title": "The choice depends on the workload",
+    "elements": [
+      {
+        "type": "text",
+        "text": "The choice depends on the workload",
+        "x": 64,
+        "y": 42,
+        "w": 1152,
+        "h": 92,
+        "size": 43,
+        "bold": true,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "12 / 12",
+        "x": 1110,
+        "y": 680,
+        "w": 106,
+        "h": 26,
+        "size": 18,
+        "bold": false,
+        "color": "#647074"
+      },
+      {
+        "type": "text",
+        "text": "KMP protects against repeated partial matches",
+        "x": 64,
+        "y": 164,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Naive remains competitive when failures are cheap",
+        "x": 64,
+        "y": 267,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "Next: search many texts with one reusable pattern",
+        "x": 64,
+        "y": 370,
+        "w": 1152,
+        "h": 83,
+        "size": 34,
+        "bold": false,
+        "color": "#20282b"
+      },
+      {
+        "type": "text",
+        "text": "github.com/egoldman2/substring-search",
+        "x": 64,
+        "y": 560,
+        "w": 1152,
+        "h": 60,
+        "size": 29,
+        "bold": false,
+        "color": "#225a95"
+      }
+    ],
+    "notes": "KMP gives predictable worst-case behaviour by keeping valid prefix information. Naive remains a useful baseline when candidates fail quickly or a match arrives immediately. The next question is how the balance changes when many texts share one pattern and its table can be reused. That would be a separate workload with a separate timing boundary. The code, raw measurements and regeneration scripts are available in the repository for checking these conclusions.",
+    "sources": [
+      "https://github.com/egoldman2/substring-search; report section 6"
+    ]
+  }
+]

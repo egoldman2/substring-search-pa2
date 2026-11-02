@@ -1,0 +1,15 @@
+name: Check project
+on: [push, workflow_dispatch]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: make all && make test && make sanitize
+      - run: python3 tests/workflow_test.py
+      - run: python3 scripts/experiment.py --smoke --instances 1 --repetitions 3 --output build/smoke
+      - run: python3 -m pip install -r requirements.txt
+      - run: python3 scripts/analyse.py && python3 scripts/build_report.py && python3 scripts/build_presentation.py
