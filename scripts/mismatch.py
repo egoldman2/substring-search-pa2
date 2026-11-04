@@ -18,6 +18,7 @@ if metadata['executable_sha256'] != sha((ROOT/'build/benchmark').read_bytes()):
 metadata.update(started_utc=datetime.now(timezone.utc).isoformat(),
     source_revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
     source_dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)),
+    working_tree_status=subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True),
     command='python3 scripts/mismatch.py', status='running', instances=3, repetitions=9)
 rows, manifest = [], []
 start = time.monotonic()

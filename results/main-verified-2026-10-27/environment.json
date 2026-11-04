@@ -1,0 +1,38 @@
+{
+  "started_utc": "2026-10-27T10:14:57.190864+00:00",
+  "source_revision": "fdbcd1bc15757edd55f03a7c71bca5bad385ec2d",
+  "source_dirty": false,
+  "os": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "python": "3.14.6",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.2.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "flags": "-std=c++17 -Wall -Wextra -Wpedantic -O2",
+  "executable_sha256": "df33d6c8c8d4b16f56fdb1f010a117b859cc049667640d69eb2ceae39373e294",
+  "source_sha256": {
+    "src/naive.cpp": "e94eb168efdff0255b9093d64998ae704759f6e4afcbe6dff81a37ddee65c0d8",
+    "src/kmp.cpp": "8494b4d370fb7882e2c283661a06567c693a6f4ca287b94a8dd1a4aacf556fc2",
+    "src/search.hpp": "a85af9dcc219fe513be5b837128898849d259e9c58d34e52c9400b24ed3a8298",
+    "bench/driver.cpp": "f321d28938e4d3b42e43e927a2b11baef6bf8804e12ca2722736190852330633"
+  },
+  "working_tree_status": "",
+  "clock": "std::chrono::steady_clock",
+  "unit": "nanoseconds per batch",
+  "corpus_sha256": "ebecb56ddf4efe49d8d18a5f5b331f97926741426a500a70cedbd9fa82a8e9d4",
+  "repetitions": 9,
+  "instances": 3,
+  "batch_target_ns": 1000000,
+  "batch_cap": 65536,
+  "driver_timeout_seconds": 30,
+  "run_budget_seconds": 900,
+  "command": {
+    "output": "results/main-verified-2026-10-27",
+    "smoke": false,
+    "instances": 3,
+    "repetitions": 9
+  },
+  "status": "complete",
+  "cpu": "arm",
+  "memory_bytes": "unavailable",
+  "finished_utc": "2026-10-27T10:15:19.855155+00:00",
+  "wall_seconds": 22.604826375027187
+}
