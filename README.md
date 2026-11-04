@@ -2,6 +2,13 @@
 
 A C++17 comparison of naive substring search and Knuth–Morris–Pratt (KMP). Both return the first matching byte index, `std::string_view::npos` if absent, and zero for an empty pattern. Binary inputs are supported.
 
+## Deliverables
+
+- [Final report](deliverables/Final%20report.pdf)
+- [Individual reflection](deliverables/Reflection.pdf)
+- [Results figures](deliverables/figures/)
+- [Results tables](results/tables.md) and [raw measurements](results/)
+
 ## Build and test
 
 ```sh

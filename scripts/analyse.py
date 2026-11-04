@@ -129,7 +129,7 @@ def main():
         ax.grid(alpha=.18)
     def save(fig, stem):
         fig.tight_layout()
-        fig.savefig(ROOT/f'figures/{stem}.png')
+        fig.savefig(ROOT/f'deliverables/figures/{stem}.png')
         plt.close(fig)
     sizes = (1024,16384,262144)
     fig,axes = plt.subplots(3,1,figsize=(8,10))
