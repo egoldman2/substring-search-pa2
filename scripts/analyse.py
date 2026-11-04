@@ -131,7 +131,6 @@ def main():
     def save(fig, stem):
         fig.tight_layout()
         fig.savefig(ROOT/f'figures/{stem}.png')
-        fig.savefig(ROOT/f'figures/{stem}.pdf',metadata={'CreationDate':None,'ModDate':None})
         plt.close(fig)
     sizes = (1024,16384,262144)
     fig,axes = plt.subplots(3,1,figsize=(8,10))

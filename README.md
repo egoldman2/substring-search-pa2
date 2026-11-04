@@ -1,19 +1,23 @@
 # Substring search comparison
 
-Programming Assignment 2 compares naive substring search and Knuth–Morris–Pratt (KMP). Both return the index of the first occurrence of a pattern in a text, or `std::string_view::npos` when there is no match. An empty pattern matches at index 0. The functions operate on bytes and support embedded zero bytes.
+A C++17 comparison of naive substring search and Knuth–Morris–Pratt (KMP). Both return the first matching byte index, `std::string_view::npos` if absent, and zero for an empty pattern. Binary inputs are supported.
 
-Both implementations are attributed to Ethan Goldman.
-
-## Run the tests
-
-A C++17 compiler and `make` are required:
+## Build and test
 
 ```sh
+make all
 make test
+python3 tests/workflow_test.py
 ```
 
-The tests cover boundary cases, a KMP fallback example, and every pair of binary strings of length up to six against `std::string::find`. Run `make clean` to remove the build directory.
+Run a search with `./build/search naive TEXT_FILE PATTERN_FILE` or replace `naive` with `kmp`.
 
-## Status
+## Experiments
 
-The search implementations and initial correctness tests are in place. The benchmark, experiments, report, video and peer responses remain to be completed.
+```sh
+python3 scripts/experiment.py --smoke --instances 1 --repetitions 3 --output build/smoke
+```
+
+The smoke-test output directory must be new. Raw measurements and environment details are in `results/`; predictions and measurement notes are in `docs/`. The current measurements are superseded; see `results/README.md`.
+
+The analysis script requires the verified replacement measurements, which have not yet been published.
