@@ -1,3 +1,3 @@
 # Measurement status
 
-The original main and mismatch runs and their figures are superseded: a stale executable was discovered. Use the verified replacement runs for final results.
+The verified main run is included. The current figures and summaries use superseded runs; verified follow-up data and regenerated outputs are pending.
