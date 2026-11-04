@@ -76,5 +76,11 @@ int main() {
         std::cerr << "comparison-count regression failed\n";
         return 1;
     }
+    counted_naive_search("ABABABAC", "ABABAC", naive);
+    counted_kmp_search("ABABABAC", "ABABAC", kmp);
+    if (naive.search != 13 || kmp.search != 9 || kmp.preprocessing != 7) {
+        std::cerr << "presentation trace counts failed\n";
+        return 1;
+    }
     std::cout << checks << " answer checks passed, plus exact comparison counts.\n";
 }

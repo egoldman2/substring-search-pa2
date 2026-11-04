@@ -1,0 +1,200 @@
+[
+  {
+    "instance_id": "mismatch_0_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 0,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "541da825f948b274ae4a5c4a688b0fdfaf1164cc8ba7e5ed2513ecb61cf86728",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_0_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 0,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "97097f9ec54600d00eb3ed38caddf2fa0f91a880dd3ec0f96c6bbaedf85d578d",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_0_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 0,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "2609273b6ee0153374160599bdabb63f9b97b2b502195f20886bf1aacf109c7e",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_1_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 1,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "e64e0271bb3000145e1b6c208d578d777e8759297948d39bb3caa61008f35220",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_1_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 1,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "36e52cefecec9731dd1131d38bfb11247bbd325536073ec13ea6e29e6a213f92",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_1_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 1,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "93fd86ec856d7a1b1b573733476e09da9332bb43b43b0922d73d75ba5c0c63de",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_7_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 7,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "6505b6e8ac0182823d51c4ed8cfedd4fa0d73a62c21d7375c76c6df7c8259f41",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_7_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 7,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "a6e046d89874c6193ad1df57599a7e992424338b9417a8b23d1081a9d793a021",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_7_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 7,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "3b1b2f57d59e0827ffb9cc3b8063a23406c6ffc7013d6b1692113c7ac6fab992",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_31_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 31,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "135a65bbeaa0e395c6d2bb7ac9f8665c560635d586a91106ee58c7162905a176",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_31_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 31,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "28d4db5d8a0f311849f82e400d093607b4f0869fdec1c633823dd4bb4028e195",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_31_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 31,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "8bb006fbb1dc034ea0634b2d3151647faecc0b9587c12cde3764c175923f58a0",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_127_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 127,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "f331e0faaa6ed87ef72af82c5f04859be586a2e83198ec7e2f51a393f13800dc",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_127_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 127,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "a88bcdc50bd24ffbf0d9409d5b0e4dd84c9bdaf17d70ede3d9d230fb3ca573f5",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_127_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 127,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "a7489ef2e9ff8c3273d990aae2e9be4f937fdbf82b6e9aee398626f60cffc713",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_511_41052",
+    "n": 65536,
+    "m": 512,
+    "position": 511,
+    "seed": 41052,
+    "text_sha256": "876e939784ea8cec38a15e77b3d5b1b44877c8a4e5a8029982d6710c474fecec",
+    "pattern_sha256": "e327195a6b6c3e489c3fa7208c8ee72bb1067a2cd2805e6994778a6d8299d978",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_511_41053",
+    "n": 65536,
+    "m": 512,
+    "position": 511,
+    "seed": 41053,
+    "text_sha256": "42e3f935f96ba2c1c0fde877dc11b4413d3e89d93830991c6f30ecd2264af400",
+    "pattern_sha256": "cf1e2710065c611a89ac3b477520dd37ffb15f35834474070d41cbf22d1f5cf0",
+    "expected": -1,
+    "status": "complete"
+  },
+  {
+    "instance_id": "mismatch_511_41054",
+    "n": 65536,
+    "m": 512,
+    "position": 511,
+    "seed": 41054,
+    "text_sha256": "c516e69b05eff1a54017723c3489734b91b585c2a248efbcf9cacda5ae3603bc",
+    "pattern_sha256": "2cde7684d116f1eb11bac7106e17cc67988f42833aa51c566833e55b50d12a2d",
+    "expected": -1,
+    "status": "complete"
+  }
+]

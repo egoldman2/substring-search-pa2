@@ -1,3 +1,3 @@
 # Measurement status
 
-The verified main run is included. The current figures and summaries use superseded runs; verified follow-up data and regenerated outputs are pending.
+The main and follow-up measurements use the verified executable. Figures and summaries are generated from these runs. Earlier runs were superseded after a stale executable was discovered.

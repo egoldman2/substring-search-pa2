@@ -114,7 +114,6 @@ def main():
                 facts[f'followup_{alg}_comparisons']=f"{row['search_comparisons']+row['preprocessing_comparisons']:,}"
     write_csv(ROOT/'results/mismatch-summary.csv',follow_rows)
     facts['followup_kmp_slowdown']=f"{float(facts['followup_kmp_us'])/float(facts['followup_naive_us']):.2f}"
-    (ROOT / 'results/facts.json').write_text(json.dumps(facts, indent=2)+'\n')
     plt.rcParams.update({'font.size':11, 'axes.spines.top':False, 'axes.spines.right':False,
         'savefig.dpi':180, 'svg.hashsalt':'substring-search'})
     colours = {'naive':'#225a95','kmp':'#bd4a2d'}

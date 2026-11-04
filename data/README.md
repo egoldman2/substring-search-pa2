@@ -6,8 +6,9 @@ the UTF-8 text downloaded on 27 October 2026 from
 <https://www.gutenberg.org/ebooks/1342.txt.utf-8>.
 Catalogue and transcription credits: <https://www.gutenberg.org/ebooks/1342>.
 Jane Austen lived 1775-1817. The original novel is public domain; the catalogue
-explicitly identifies its text as public domain in the USA. Only the original
-novel excerpt is included, without the distributor's header, logo or licence.
+explicitly identifies its text as public domain in the USA. The excerpt retains the source's line wrapping, punctuation, emphasis markers
+and illustration-caption markers. No image files or distributor header, logo
+or licence are included.
 This corpus provenance does not grant a software licence for the project.
 
 The generator uses three different circular offsets into the excerpt and repeats

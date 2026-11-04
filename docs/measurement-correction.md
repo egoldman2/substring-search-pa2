@@ -8,9 +8,9 @@ The timed search loop was unchanged; results were still consumed and individual
 calls checked before and after timing. Nevertheless, the executable did not
 correspond exactly to the recorded source revision.
 
-The original pilot, main and mismatch runs were superseded. The replacement runs were collected after a forced rebuild and will be added in a later checkpoint. The runner now
+The original pilot, main and mismatch runs were superseded. The replacement runs were collected after a forced rebuild. The runner now
 forces compilation, records source and executable SHA-256 hashes, and records the
 working-tree status. The follow-up requires the exact same executable hash.
-The current figures use superseded data. Original predictions and the post-main follow-up
+The figures use the verified replacement runs. Original predictions and the post-main follow-up
 prediction remain unchanged; the earlier observations were already known before
 replacement collection, which is verification rather than a new blind study.

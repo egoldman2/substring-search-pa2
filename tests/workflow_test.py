@@ -1,5 +1,7 @@
 """Small checks for generated labels and the file-based command interface."""
 from pathlib import Path
+import hashlib
+import json
 import subprocess
 import sys
 import tempfile
@@ -9,9 +11,13 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from experiment import configurations, instance
 
 corpus = (ROOT / 'data/austen.txt').read_bytes()
+manifest={x['instance_id']:x for x in json.loads((ROOT/'results/main-verified-2026-10-27/manifest.json').read_text())}
 for config in configurations():
     for seed in (41052, 41053, 41054):
         text, pattern, expected = instance(config, seed, corpus)
+        recorded=manifest['_'.join(map(str,config))+f'_{seed}']
+        if hashlib.sha256(text).hexdigest()!=recorded['text_sha256'] or hashlib.sha256(pattern).hexdigest()!=recorded['pattern_sha256']:
+            raise RuntimeError('regenerated input differs from committed hashes')
         if len(text) != config[1] or len(pattern) != config[2] or text.find(pattern) != expected:
             raise RuntimeError(f'bad generated instance: {config}, {seed}')
 

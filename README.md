@@ -18,6 +18,6 @@ Run a search with `./build/search naive TEXT_FILE PATTERN_FILE` or replace `naiv
 python3 scripts/experiment.py --smoke --instances 1 --repetitions 3 --output build/smoke
 ```
 
-The smoke-test output directory must be new. Raw measurements and environment details are in `results/`; predictions and measurement notes are in `docs/`. The verified main measurements are included; the verified follow-up is still pending. See `results/README.md`.
+The smoke-test output directory must be new. Raw measurements and environment details are in `results/`; predictions and measurement notes are in `docs/`. The verified main and follow-up measurements are included. See `results/README.md`.
 
-The analysis script requires the verified replacement measurements, which have not yet been published.
+Regenerate the figures and tables with `python3 -m pip install -r requirements.txt` followed by `python3 scripts/analyse.py`.
