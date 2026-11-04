@@ -6,6 +6,8 @@ A C++17 comparison of naive substring search and Knuth–Morris–Pratt (KMP). B
 
 - [Final report](deliverables/Final%20report.pdf)
 - [Individual reflection](deliverables/Reflection.pdf)
+- [Presentation slides](deliverables/Presentation%20Slides.pdf)
+- [Recorded presentation](https://youtu.be/QFbAhoQ_Pts)
 - [Results figures](deliverables/figures/)
 - [Results tables](results/tables.md) and [raw measurements](results/)
 
